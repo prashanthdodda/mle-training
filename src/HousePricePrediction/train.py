@@ -16,12 +16,14 @@ from HousePricePrediction import logger
 config = configparser.ConfigParser()
 config.read("setup.cfg")
 log_obj = logging.getLogger(__name__)
-logger = logger.configure_logger(
-    logger=log_obj,
-    log_file=config["params"]["log_file"],
-    console=config["params"]["no_console"],
-    log_level=config["params"]["log_level"],
-)
+# logger = logger.configure_logger(
+#     logger=log_obj,
+#     log_file=config["params"]["log_file"],
+#     console=config["params"]["no_console"],
+#     log_level=config["params"]["log_level"],
+# )
+logger = logger.configure_logger(logger=log_obj)
+# logger = logger.configure_logger(log_file="logs/HousePricePrediction_log.log", logger=log_obj)
 
 
 def arg_parser():
