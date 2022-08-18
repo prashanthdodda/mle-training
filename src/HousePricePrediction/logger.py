@@ -1,31 +1,33 @@
+# Logging Config
+# More on Logging Configuration
+# https://docs.python.org/3/library/logging.config.html
+# Setting up a config
 import logging
 import logging.config
 
 # from logging_tree import printout
 
-# Logging Config
-# More on Logging Configuration
-# https://docs.python.org/3/library/logging.config.html
-# Setting up a config
 LOGGING_DEFAULT_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
-    },
     # "formatters": {
-    #     "default": {
-    #         "format": "%(asctime)s %(clientip)-15s %(user)-8s %(message)s",  # "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s",
-    #         "datefmt": "%Y-%m-%d %H:%M:%S",
-    #     },
-    #     "simple": {"format": "%(message)s"},
+    #     "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     # },
+    "formatters": {
+        "default": {
+            "format": "%(asctime)s %(clientip)-15s %(user)-8s %(message)s",  # "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "simple": {"format": "%(message)s"},
+    },
     "root": {"level": "DEBUG"},
 }
 
+# log_file = "logs/HousePricePrediction_log.log"
+
 
 def configure_logger(
-    logger=None, cfg=None, log_file=None, console=False, log_level="DEBUG"
+    logger=None, cfg=None, log_file=None, console=False, log_level="DEBUG",
 ):
     """Function to setup configurations of logger through function.
 
@@ -69,7 +71,7 @@ def configure_logger(
             fh.setFormatter(f)
             logger.addHandler(fh)
 
-        if not console:
+        if console:
             sh = logging.StreamHandler()
             sh.setLevel(getattr(logging, log_level))
             sh.setFormatter(f)

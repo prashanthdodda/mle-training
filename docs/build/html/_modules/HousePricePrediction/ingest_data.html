@@ -66,8 +66,7 @@
              
   <h1>Source code for HousePricePrediction.ingest_data</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">argparse</span>
-
-<span class="c1"># import configparser</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tarfile</span>
@@ -80,11 +79,10 @@
 <span class="c1"># from sklearn.model_selection import StratifiedShuffleSplit</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
-<span class="kn">from</span> <span class="nn">HousePricePrediction</span> <span class="kn">import</span> <span class="n">logger</span> <span class="k">as</span> <span class="n">lg</span>
+<span class="kn">from</span> <span class="nn">HousePricePrediction</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="c1"># config = configparser.ConfigParser()</span>
-<span class="c1"># config.read(&quot;setup.cfg&quot;)</span>
-<span class="c1"># print(&quot;config[&quot;params&quot;][&quot;housing_path&quot;] :&quot;, config[&quot;params&quot;][&quot;housing_path&quot;])</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+<span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;setup.cfg&quot;</span><span class="p">)</span>
 
 
 <span class="n">log_obj</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -125,162 +123,6 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># config[&quot;params&quot;][&quot;no_console&quot;],  # False</span>
     <span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">parser</span></div>
-
-
-<div class="viewcode-block" id="Ingest_data"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.Ingest_data">[docs]</a><span class="k">class</span> <span class="nc">Ingest_data</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">HOUSING_PATH</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">outputpath</span>  <span class="c1"># os.path.join(&quot;datasets&quot;, &quot;housing&quot;)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">HOUSING_URL</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ageron/handson-ml/master/datasets/housing/housing.tgz&quot;</span>  <span class="c1"># config[&quot;params&quot;][&quot;housing_url&quot;]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;hi2&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Intiating </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Ingest_data.get_logger"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.Ingest_data.get_logger">[docs]</a>    <span class="k">def</span> <span class="nf">get_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-        <span class="n">logger1</span> <span class="o">=</span> <span class="n">lg</span><span class="o">.</span><span class="n">configure_logger</span><span class="p">(</span>
-            <span class="n">logger</span><span class="o">=</span><span class="n">log_obj</span><span class="p">,</span>
-            <span class="n">log_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">,</span>
-            <span class="n">console</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">no_console_log</span><span class="p">,</span>
-            <span class="n">log_level</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">logger1</span></div>
-
-<div class="viewcode-block" id="Ingest_data.fetch_housing_data"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.Ingest_data.fetch_housing_data">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_housing_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">housing_url</span><span class="p">,</span> <span class="n">housing_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        fect_housing_data function in the Ingest_Data takes housing_url and housing_path as the inputs and stores the data.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        housing_url: url</span>
-<span class="sd">                url to download the data from.</span>
-<span class="sd">        housing_path: str</span>
-<span class="sd">                path to store the data that was downloaded from the housing_url.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">            Doesn&#39;t return anything. It downloads the data and stores it</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">housing_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">tgz_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">housing_path</span><span class="p">,</span> <span class="s2">&quot;housing.tgz&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fetching housing data from </span><span class="si">{</span><span class="n">tgz_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">housing_url</span><span class="p">,</span> <span class="n">tgz_path</span><span class="p">)</span>
-        <span class="n">housing_tgz</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tgz_path</span><span class="p">)</span>
-        <span class="n">housing_tgz</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">housing_path</span><span class="p">)</span>
-        <span class="n">housing_tgz</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="Ingest_data.load_housing_data"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.Ingest_data.load_housing_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_housing_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">housing_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The function load_housing_data in Ingest_data takes housing_path as the input and returns the dataframe</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        housing_path: str</span>
-<span class="sd">             path to read the data from</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        df</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;loading housing data&quot;</span><span class="p">)</span>
-        <span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">housing_path</span><span class="p">,</span> <span class="s2">&quot;housing.csv&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span></div>
-
-    <span class="c1"># def income_cat_proportions(self, data):</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     this function income_cat_proportions take the data and makes teh income_cat into proportions</span>
-    <span class="c1">#     Parameters</span>
-    <span class="c1">#     ----------</span>
-    <span class="c1">#             data : dataframe</span>
-    <span class="c1">#     Returns</span>
-    <span class="c1">#     ----------</span>
-    <span class="c1">#     income category proportions</span>
-
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     return data[&quot;income_cat&quot;].value_counts() / len(data)</span>
-
-<div class="viewcode-block" id="Ingest_data.split_data"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.Ingest_data.split_data">[docs]</a>    <span class="k">def</span> <span class="nf">split_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_test_data_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        split_data function splits the data into train and test datsets and stores them in the csv fomat in the directory that was provoided in the arguments.</span>
-<span class="sd">        default directory to store the train adn test data is data/processed</span>
-
-<span class="sd">        Attributes</span>
-<span class="sd">        ----------</span>
-<span class="sd">        train_test_data_path : str</span>
-<span class="sd">             path to store the train and test datasets.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Splitting the data into train and test&quot;</span><span class="p">)</span>
-        <span class="c1"># fetch the data from the URL</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_housing_data</span><span class="p">(</span>
-            <span class="n">housing_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">HOUSING_URL</span><span class="p">,</span> <span class="n">housing_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">HOUSING_PATH</span>
-        <span class="p">)</span>
-
-        <span class="c1"># load the data</span>
-        <span class="n">housing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_housing_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HOUSING_PATH</span><span class="p">)</span>
-
-        <span class="c1"># adding new columns</span>
-        <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;rooms_per_household&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;total_rooms&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;households&quot;</span><span class="p">]</span>
-        <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;bedrooms_per_room&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;total_bedrooms&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;total_rooms&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;population_per_household&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;households&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-
-        <span class="c1"># split X and y</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">housing</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">]</span>
-
-        <span class="c1"># splitting the data</span>
-        <span class="c1"># split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)</span>
-        <span class="c1"># for train_index, test_index in split.split(X, y):</span>
-        <span class="c1">#     X_train, y_train = X.loc[train_index], y.loc[train_index]</span>
-        <span class="c1"># X_test, y_test = X.loc[test_index], y.loc[test_index]</span>
-        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Imputing missing values in numerical variables</span>
-        <span class="n">imputer</span> <span class="o">=</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">)</span>
-        <span class="n">train_num</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="n">train_num</span><span class="o">.</span><span class="n">columns</span>
-        <span class="n">imputer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_num</span><span class="p">)</span>
-        <span class="n">train_num</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">train_num</span><span class="p">)</span>
-
-        <span class="n">test_num</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">test_num</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test_num</span><span class="p">)</span>
-
-        <span class="c1"># combining numerical and categorical variables</span>
-        <span class="n">train_num</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">train_num</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X_train</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">test_num</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">test_num</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X_test</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-
-        <span class="c1"># coverting the categorical variables into one hot encoding</span>
-        <span class="n">train_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">])</span>
-        <span class="n">test_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X_test</span><span class="p">[</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">])</span>
-
-        <span class="c1"># combine numerical and categorical variables</span>
-        <span class="n">train_combined</span> <span class="o">=</span> <span class="n">train_num</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">train_cat</span><span class="p">)</span>
-        <span class="n">test_combined</span> <span class="o">=</span> <span class="n">test_num</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_cat</span><span class="p">)</span>
-
-        <span class="c1"># create train and test data</span>
-        <span class="n">train_data</span> <span class="o">=</span> <span class="n">train_combined</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
-        <span class="n">test_data</span> <span class="o">=</span> <span class="n">test_combined</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
-        <span class="c1"># test_data = (test_combined, y_test)</span>
-
-        <span class="n">train_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">train_test_data_path</span><span class="si">}</span><span class="s2">/train.csv&quot;</span><span class="p">)</span>
-        <span class="n">test_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">train_test_data_path</span><span class="si">}</span><span class="s2">/test.csv&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;splitted data is stored in the path </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">train_test_data_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span></div></div>
-        <span class="c1"># return args[&quot;train-test-data&quot;]</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-
-    <span class="n">args</span><span class="p">,</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">arg_aprser</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">outputpath</span><span class="p">:</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Please Provide the path to the data using -op&quot;</span><span class="p">)</span>
     <span class="c1"># if not args.train_test_data:</span>
@@ -289,7 +131,160 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
             <span class="s2">&quot;Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console&quot;</span>
         <span class="p">)</span>
-    <span class="n">Ingest_data</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">split_data</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">train_test_data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">configure_logger</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">log_obj</span><span class="p">)</span>
+<span class="c1"># logger = logger.configure_logger(log_file=&quot;logs/HousePricePrediction_log.log&quot;, logger=log_obj)</span>
+
+
+<span class="c1"># class Ingest_data:</span>
+<span class="c1">#     def __init__(self, args, logger):</span>
+
+<span class="c1">#         self.HOUSING_PATH = args.outputpath  # os.path.join(&quot;datasets&quot;, &quot;housing&quot;)</span>
+<span class="c1">#         self.HOUSING_URL = &quot;https://raw.githubusercontent.com/ageron/handson-ml/master/datasets/housing/housing.tgz&quot;  # config[&quot;params&quot;][&quot;housing_url&quot;]</span>
+<span class="c1">#         self.logger = logger</span>
+<span class="c1">#         self.logger.info(f&quot;Intiating {self.__class__.__name__}&quot;)</span>
+
+
+<div class="viewcode-block" id="fetch_housing_data"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.fetch_housing_data">[docs]</a><span class="k">def</span> <span class="nf">fetch_housing_data</span><span class="p">(</span><span class="n">housing_url</span><span class="p">,</span> <span class="n">housing_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    fect_housing_data function in the Ingest_Data takes housing_url and housing_path as the inputs and stores the data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    housing_url: url</span>
+<span class="sd">            url to download the data from.</span>
+<span class="sd">    housing_path: str</span>
+<span class="sd">            path to store the data that was downloaded from the housing_url.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Doesn&#39;t return anything. It downloads the data and stores it</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">housing_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tgz_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">housing_path</span><span class="p">,</span> <span class="s2">&quot;housing.tgz&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fetching housing data from </span><span class="si">{</span><span class="n">tgz_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">housing_url</span><span class="p">,</span> <span class="n">tgz_path</span><span class="p">)</span>
+    <span class="n">housing_tgz</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tgz_path</span><span class="p">)</span>
+    <span class="n">housing_tgz</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">housing_path</span><span class="p">)</span>
+    <span class="n">housing_tgz</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="load_housing_data"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.load_housing_data">[docs]</a><span class="k">def</span> <span class="nf">load_housing_data</span><span class="p">(</span><span class="n">housing_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The function load_housing_data in Ingest_data takes housing_path as the input and returns the dataframe</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    housing_path: str</span>
+<span class="sd">            path to read the data from</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;loading housing data&quot;</span><span class="p">)</span>
+    <span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">housing_path</span><span class="p">,</span> <span class="s2">&quot;housing.csv&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span></div>
+
+
+<span class="c1"># def income_cat_proportions(self, data):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     this function income_cat_proportions take the data and makes teh income_cat into proportions</span>
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#             data : dataframe</span>
+<span class="c1">#     Returns</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     income category proportions</span>
+
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return data[&quot;income_cat&quot;].value_counts() / len(data)</span>
+
+
+<div class="viewcode-block" id="split_data"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.ingest_data.split_data">[docs]</a><span class="k">def</span> <span class="nf">split_data</span><span class="p">(</span><span class="n">train_test_data_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    split_data function splits the data into train and test datsets and stores them in the csv fomat in the directory that was provoided in the arguments.</span>
+<span class="sd">    default directory to store the train adn test data is data/processed</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    train_test_data_path : str</span>
+<span class="sd">            path to store the train and test datasets.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">housing_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="s2">&quot;housing_path&quot;</span><span class="p">]</span>
+    <span class="c1"># train_test_data_path = config[&#39;params&#39;][&#39;processed_data&#39;]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Splitting the data into train and test&quot;</span><span class="p">)</span>
+    <span class="c1"># fetch the data from the URL</span>
+    <span class="n">fetch_housing_data</span><span class="p">(</span>
+        <span class="n">housing_url</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="s2">&quot;housing_url&quot;</span><span class="p">],</span> <span class="n">housing_path</span><span class="o">=</span><span class="n">housing_path</span>
+    <span class="p">)</span>
+
+    <span class="c1"># load the data</span>
+    <span class="n">housing</span> <span class="o">=</span> <span class="n">load_housing_data</span><span class="p">(</span><span class="n">housing_path</span><span class="p">)</span>
+
+    <span class="c1"># adding new columns</span>
+    <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;rooms_per_household&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;total_rooms&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;households&quot;</span><span class="p">]</span>
+    <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;bedrooms_per_room&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;total_bedrooms&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;total_rooms&quot;</span><span class="p">]</span>
+    <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;population_per_household&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;households&quot;</span><span class="p">]</span>
+
+    <span class="c1"># split X and y</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">housing</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">housing</span><span class="p">[</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">]</span>
+
+    <span class="c1"># splitting the data</span>
+    <span class="c1"># split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)</span>
+    <span class="c1"># for train_index, test_index in split.split(X, y):</span>
+    <span class="c1">#     X_train, y_train = X.loc[train_index], y.loc[train_index]</span>
+    <span class="c1"># X_test, y_test = X.loc[test_index], y.loc[test_index]</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Imputing missing values in numerical variables</span>
+    <span class="n">imputer</span> <span class="o">=</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">)</span>
+    <span class="n">train_num</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">train_num</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">imputer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_num</span><span class="p">)</span>
+    <span class="n">train_num</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">train_num</span><span class="p">)</span>
+
+    <span class="n">test_num</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">test_num</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test_num</span><span class="p">)</span>
+
+    <span class="c1"># combining numerical and categorical variables</span>
+    <span class="n">train_num</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">train_num</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X_train</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">test_num</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">test_num</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X_test</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="c1"># coverting the categorical variables into one hot encoding</span>
+    <span class="n">train_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">])</span>
+    <span class="n">test_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X_test</span><span class="p">[</span><span class="s2">&quot;ocean_proximity&quot;</span><span class="p">])</span>
+
+    <span class="c1"># combine numerical and categorical variables</span>
+    <span class="n">train_combined</span> <span class="o">=</span> <span class="n">train_num</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">train_cat</span><span class="p">)</span>
+    <span class="n">test_combined</span> <span class="o">=</span> <span class="n">test_num</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_cat</span><span class="p">)</span>
+
+    <span class="c1"># create train and test data</span>
+    <span class="n">train_data</span> <span class="o">=</span> <span class="n">train_combined</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">test_data</span> <span class="o">=</span> <span class="n">test_combined</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+    <span class="c1"># test_data = (test_combined, y_test)</span>
+
+    <span class="n">train_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">train_test_data_path</span><span class="si">}</span><span class="s2">/train.csv&quot;</span><span class="p">)</span>
+    <span class="n">test_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">train_test_data_path</span><span class="si">}</span><span class="s2">/test.csv&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;splitted data is stored in the path </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">train_test_data_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_test_data_path</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">arg_aprser</span><span class="p">()</span>
+    <span class="n">split_data</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">train_test_data</span><span class="p">)</span>
 </pre></div>
 
            </div>

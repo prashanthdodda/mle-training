@@ -12,20 +12,13 @@ from sklearn.impute import SimpleImputer
 # from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import train_test_split
 
-from HousePricePrediction import logger as lg
+from HousePricePrediction import logger
 
 config = configparser.ConfigParser()
 config.read("setup.cfg")
-# print("config["params"]["housing_path"] :", config["params"]["housing_path"])
 
 
 log_obj = logging.getLogger(__name__)
-logger = lg.configure_logger(
-    logger=log_obj,
-    log_file=config["params"]["log_file"],
-    console=config["params"]["no_console"],
-    log_level=config["params"]["log_level"],
-)
 
 
 def arg_aprser():
@@ -73,6 +66,10 @@ def arg_aprser():
         )
 
     return args
+
+
+logger = logger.configure_logger(logger=log_obj)
+# logger = logger.configure_logger(log_file="logs/HousePricePrediction_log.log", logger=log_obj)
 
 
 # class Ingest_data:
