@@ -4,13 +4,19 @@ import logging
 import os
 import tarfile
 
-# import numpy as np
+import numpy as np
 import pandas as pd
 from six.moves import urllib
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.compose import ColumnTransformer
+from sklearn.feature_extraction.text import _VectorizerMixin
+from sklearn.feature_selection._base import SelectorMixin
 from sklearn.impute import SimpleImputer
 
 # from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from HousePricePrediction import logger
 
@@ -79,6 +85,35 @@ logger = logger.configure_logger(logger=log_obj)
 #         self.HOUSING_URL = "https://raw.githubusercontent.com/ageron/handson-ml/master/datasets/housing/housing.tgz"  # config["params"]["housing_url"]
 #         self.logger = logger
 #         self.logger.info(f"Intiating {self.__class__.__name__}")
+
+
+rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
+
+
+class CombinedAttributesAdder(BaseEstimator, TransformerMixin):
+    def __init__(self, add_bedrooms_per_room=True):  # no *args or **kargs
+        self.add_bedrooms_per_room = add_bedrooms_per_room
+
+    def fit(self, X, y=None):
+        return self  # nothing else to do
+
+    def transform(self, X):
+        rooms_per_household = X[:, rooms_ix] / X[:, households_ix]
+        population_per_household = X[:, population_ix] / X[:, households_ix]
+        cols = []
+        if self.add_bedrooms_per_room:
+            bedrooms_per_room = X[:, bedrooms_ix] / X[:, rooms_ix]
+            cols.extend(
+                ["rooms_per_household", "population_per_household", "bedrooms_per_room"]
+            )
+            return (
+                np.c_[rooms_per_household, population_per_household, bedrooms_per_room],
+                cols,
+            )
+
+        else:
+            cols.extend(["rooms_per_household", "population_per_household"])
+            return np.c_[rooms_per_household, population_per_household], cols
 
 
 def fetch_housing_data(housing_url, housing_path):
@@ -162,9 +197,17 @@ def split_data(train_test_data_path):
     housing = load_housing_data(housing_path)
 
     # adding new columns
-    housing["rooms_per_household"] = housing["total_rooms"] / housing["households"]
-    housing["bedrooms_per_room"] = housing["total_bedrooms"] / housing["total_rooms"]
-    housing["population_per_household"] = housing["population"] / housing["households"]
+    # housing["rooms_per_household"] = housing["total_rooms"] / housing["households"]
+    # housing["bedrooms_per_room"] = housing["total_bedrooms"] / housing["total_rooms"]
+    # housing["population_per_household"] = housing["population"] / housing["households"]
+
+    # using pipeline to create new features
+
+    attr_adder = CombinedAttributesAdder(add_bedrooms_per_room=False)
+    housing_extra_attribs, cols = attr_adder.transform(housing.values)
+
+    housing_extra_attribs_df = pd.DataFrame(housing_extra_attribs, columns=cols)
+    housing = housing.join(housing_extra_attribs_df)
 
     # split X and y
     X = housing.drop(["median_house_value"], axis=1)
@@ -179,7 +222,26 @@ def split_data(train_test_data_path):
         X, y, test_size=0.2, random_state=42
     )
 
-    # Imputing missing values in numerical variables
+    # pipline
+    # train_num = X_train.drop(["ocean_proximity"], axis=1)
+    # num_pipeline = Pipeline(
+    #     [
+    #         ("imputer", SimpleImputer(strategy="median")),
+    #         ("attribs_adder", CombinedAttributesAdder()),
+    #         ("std_scaler", StandardScaler()),
+    #     ]
+    # )
+
+    # num_attribs = list(train_num)
+    # cat_attribs = ["ocean_proximity"]
+
+    # full_pipeline = ColumnTransformer(
+    #     [("num", num_pipeline, num_attribs), ("cat", OneHotEncoder(), cat_attribs)]
+    # )
+    # X_train_prepared = full_pipeline.fit_transform(X_train)
+    # X_test_prepared = full_pipeline.fit_transform(X_test)
+
+    # # Imputing missing values in numerical variables
     imputer = SimpleImputer(strategy="median")
     train_num = X_train.drop(["ocean_proximity"], axis=1)
     cols = train_num.columns
@@ -204,7 +266,6 @@ def split_data(train_test_data_path):
     # create train and test data
     train_data = train_combined.join(y_train)
     test_data = test_combined.join(y_test)
-    # test_data = (test_combined, y_test)
 
     train_data.to_csv(f"{train_test_data_path}/train.csv")
     test_data.to_csv(f"{train_test_data_path}/test.csv")
