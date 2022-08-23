@@ -87,8 +87,59 @@ param_grid = [
 ]
 
 
+def train_linear_regression(X_train, y_train, model_path):
+    lin_reg = LinearRegression()
+    logger.info("training Linear Regression model")
+    lin_reg.fit(X_train, y_train)
+
+    # save models into .pkl files
+    lr_path = model_path + "/lr_model.pkl"
+    with open(lr_path, "wb") as path:
+        pickle.dump(lin_reg, path)
+    logger.info(f"Trained linear regression model stored in path : {lr_path}")
+    return lr_path
+
+
+def train_decison_tree(X_train, y_train, model_path):
+    tree_reg = DecisionTreeRegressor(random_state=42)
+    logger.info("training decision tree model")
+    tree_reg.fit(X_train, y_train)
+    dt_path = model_path + "/dt_model.pkl"
+    with open(dt_path, "wb") as path:
+        pickle.dump(tree_reg, path)
+    logger.info(f"Trained decison tree regression model stored in path : {dt_path}")
+    return dt_path
+
+
+def train_randomforest_regressor(X_train, y_train, model_path):
+    forest_reg = RandomForestRegressor(random_state=42)
+    # train across 5 folds, that's a total of (12+6)*5=90 rounds of training
+    grid_search = GridSearchCV(
+        forest_reg,
+        param_grid,
+        cv=5,
+        scoring="neg_mean_squared_error",
+        return_train_score=True,
+    )
+    grid_search.fit(X_train, y_train)
+
+    grid_search.best_params_
+    # cvres = grid_search.cv_results_
+    # for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
+    # print(np.sqrt(-mean_score), params)
+
+    final_model = grid_search.best_estimator_
+
+    rf_path = model_path + "/rf_model.pkl"
+    with open(rf_path, "wb") as path:
+        pickle.dump(final_model, path)
+
+    logger.info(f"Trained Random Forest Regressor model stored in path : {rf_path}")
+    return rf_path
+
+
 def train(
-    train_data, model_path,
+    train_data, model_path=config["params"]["trained_models"],
 ):
     """'
     train function takes the train data from the Train object and stores the model in a pickle file
@@ -105,48 +156,10 @@ def train(
         train_data["median_house_value"],
     )
 
-    lin_reg = LinearRegression()
-    logger.info("training Linear Regression model")
-    lin_reg.fit(X_train, y_train)
-
-    tree_reg = DecisionTreeRegressor(random_state=42)
-    logger.info("training decision tree model")
-    tree_reg.fit(X_train, y_train)
-
-    forest_reg = RandomForestRegressor(random_state=42)
-    # train across 5 folds, that's a total of (12+6)*5=90 rounds of training
-    grid_search = GridSearchCV(
-        forest_reg,
-        param_grid,
-        cv=5,
-        scoring="neg_mean_squared_error",
-        return_train_score=True,
-    )
-    grid_search.fit(X_train, y_train)
-
-    grid_search.best_params_
-    cvres = grid_search.cv_results_
-    for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
-        print(np.sqrt(-mean_score), params)
-
-    final_model = grid_search.best_estimator_
-
-    # save models into .pkl files
-    lr_path = model_path + "/lr_model.pkl"
-    with open(lr_path, "wb") as path:
-        pickle.dump(lin_reg, path)
-
-    dt_path = model_path + "/dt_model.pkl"
-    with open(dt_path, "wb") as path:
-        pickle.dump(tree_reg, path)
-
-    rf_path = model_path + "/rf_model.pkl"
-    with open(rf_path, "wb") as path:
-        pickle.dump(final_model, path)
-
-    logger.info(f"Trained models stored in path : {model_path}")
-    logger.info(f"saved models : {os.listdir(model_path)}")
-    return model_path
+    lr_model = train_linear_regression(X_train, y_train, model_path)
+    dt_model = train_decison_tree(X_train, y_train, model_path)
+    rf_model = train_randomforest_regressor(X_train, y_train, model_path)
+    return [lr_model, dt_model, rf_model]
 
 
 if __name__ == "__main__":
