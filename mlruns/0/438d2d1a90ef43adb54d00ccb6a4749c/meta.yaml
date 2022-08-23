@@ -1,0 +1,16 @@
+artifact_uri: file:///home/prashanth/mle-training/mlruns/0/438d2d1a90ef43adb54d00ccb6a4749c/artifacts
+deleted_time: 1661240269442
+end_time: 1661239951390
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+name: ''
+run_id: 438d2d1a90ef43adb54d00ccb6a4749c
+run_uuid: 438d2d1a90ef43adb54d00ccb6a4749c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1661239951376
+status: 4
+tags: []
+user_id: prashanth

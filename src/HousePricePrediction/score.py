@@ -61,6 +61,12 @@ def arg_parser():
         help="Whther to write or not to write the logs to the console",
         default=config["params"]["no_console"],
     )
+    parser.add_argument(
+        "--metric",
+        type=str,
+        help="Please specify one of the following : 'rmse', 'mae'",
+        default=config["params"]["metric"],
+    )
     args = parser.parse_args()
     if (
         not args.model_path
@@ -97,7 +103,7 @@ def arg_parser():
 #         self.logger.info(f"Intiating {self.__class__.__name__}")
 
 
-def find_score(test_data, model_path):
+def find_score(test_data, model_path, metric="rmse"):
     """
     Calculates the model score
 
@@ -124,13 +130,19 @@ def find_score(test_data, model_path):
         test_data["median_house_value"],
     )
     final_predictions = model.predict(X_test_prepared)
-    final_mse = mean_squared_error(y_test, final_predictions)
-    final_rmse = np.sqrt(final_mse)
+    res = None
+    if metric == "rmse":
+        final_mse = mean_squared_error(y_test, final_predictions)
+        res = np.sqrt(final_mse)
+    elif metric == "mae":
+        res = mean_absolute_error(y_test, final_predictions)
+    else:
+        raise Exception("Metric should be one of the following : 'rmse','mae'")
 
-    logger.info(f"FINAL RMSE : {final_rmse}")
-    return final_rmse
+    logger.info(f"FINAL RMSE : {res}")
+    return res
 
 
 if __name__ == "__main__":
     args = arg_parser()
-    find_score(args.test_data, args.model_path)
+    find_score(args.test_data, args.model_path, args.metric)
