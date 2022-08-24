@@ -4,6 +4,7 @@ import logging
 import os
 import pickle
 
+import mlflow
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
@@ -112,23 +113,28 @@ def train_decison_tree(X_train, y_train, model_path):
 
 
 def train_randomforest_regressor(X_train, y_train, model_path):
-    forest_reg = RandomForestRegressor(random_state=42)
-    # train across 5 folds, that's a total of (12+6)*5=90 rounds of training
-    grid_search = GridSearchCV(
-        forest_reg,
-        param_grid,
-        cv=5,
-        scoring="neg_mean_squared_error",
-        return_train_score=True,
-    )
-    grid_search.fit(X_train, y_train)
+    with mlflow.start_run(run_name="training_rf"):
+        forest_reg = RandomForestRegressor(random_state=42)
+        # train across 5 folds, that's a total of (12+6)*5=90 rounds of training
+        grid_search = GridSearchCV(
+            forest_reg,
+            param_grid,
+            cv=5,
+            scoring="neg_mean_squared_error",
+            return_train_score=True,
+        )
+        grid_search.fit(X_train, y_train)
 
-    grid_search.best_params_
-    # cvres = grid_search.cv_results_
-    # for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
-    # print(np.sqrt(-mean_score), params)
+        best_parms = grid_search.best_params_
+        # cvres = grid_search.cv_results_
+        # for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
+        # print(np.sqrt(-mean_score), params)
 
-    final_model = grid_search.best_estimator_
+        final_model = grid_search.best_estimator_
+
+        # Log parameter, metrics, and model to MLflow
+        mlflow.log_param(key="gridsearch", value=best_parms)
+        mlflow.sklearn.log_model(final_model, "rf model")
 
     rf_path = model_path + "/rf_model.pkl"
     with open(rf_path, "wb") as path:
@@ -164,5 +170,5 @@ def train(
 
 if __name__ == "__main__":
     args = arg_parser()
-    train(args.input_data, args.model_path)
+    train(args.input_data + "/train.csv", args.model_path)
 
