@@ -4,6 +4,7 @@ import logging
 import os
 import pickle
 
+import mlflow
 import numpy as np
 import pandas as pd
 
@@ -131,13 +132,15 @@ def find_score(test_data, model_path, metric="rmse"):
     )
     final_predictions = model.predict(X_test_prepared)
     res = None
-    if metric == "rmse":
-        final_mse = mean_squared_error(y_test, final_predictions)
-        res = np.sqrt(final_mse)
-    elif metric == "mae":
-        res = mean_absolute_error(y_test, final_predictions)
-    else:
-        raise Exception("Metric should be one of the following : 'rmse','mae'")
+    with mlflow.start_run(run_name="Score"):
+        if metric == "rmse":
+            final_mse = mean_squared_error(y_test, final_predictions)
+            res = np.sqrt(final_mse)
+        elif metric == "mae":
+            res = mean_absolute_error(y_test, final_predictions)
+        else:
+            raise Exception("Metric should be one of the following : 'rmse','mae'")
+        mlflow.log_metric(key=metric, value=res)
 
     logger.info(f"FINAL RMSE : {res}")
     return res
@@ -145,4 +148,4 @@ def find_score(test_data, model_path, metric="rmse"):
 
 if __name__ == "__main__":
     args = arg_parser()
-    find_score(args.test_data, args.model_path, args.metric)
+    find_score(args.test_data + "/test.csv", args.model_path, args.metric)
