@@ -1,0 +1,13 @@
+FROM continuumio/miniconda3:latest
+LABEL maintainer="Prashanth Dodda"
+
+WORKDIR /housepriceprediction
+
+COPY ./ ./
+
+RUN conda env create -f env.yml
+SHELL ["conda","run","-n","mle-dev","/bin/bash","-c"]
+RUN pip install HousePricePrediction-0.2-py3-none-any.whl
+
+RUN mkdir logs
+ENTRYPOINT ["conda","run","--no-capture-output","-n","mle-dev","python","main.py"]

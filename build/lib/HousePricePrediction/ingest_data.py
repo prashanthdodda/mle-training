@@ -1,3 +1,5 @@
+# v0.3 ingest data
+
 import argparse
 import configparser
 import logging
@@ -209,13 +211,15 @@ def split_data(train_test_data_path):
     test_data = test_combined.join(y_test)
     # test_data = (test_combined, y_test)
 
-    train_data.to_csv(f"{train_test_data_path}/train.csv")
-    test_data.to_csv(f"{train_test_data_path}/test.csv")
+    train_data_path = f"{train_test_data_path}/train.csv"
+    test_data_path = f"{train_test_data_path}/test.csv"
+    train_data.to_csv(train_data_path)
+    test_data.to_csv(test_data_path)
 
     logger.debug(
         f"splitted data is stored in the path {os.listdir(train_test_data_path)}"
     )
-    return train_test_data_path
+    return train_data_path, test_data_path
 
 
 if __name__ == "__main__":
