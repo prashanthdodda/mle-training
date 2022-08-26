@@ -4,6 +4,7 @@
 # Setting up a config
 import logging
 import logging.config
+import os
 
 # from logging_tree import printout
 
@@ -27,7 +28,11 @@ LOGGING_DEFAULT_CONFIG = {
 
 
 def configure_logger(
-    logger=None, cfg=None, log_file=None, console=False, log_level="DEBUG",
+    logger=None,
+    cfg=None,
+    log_file="logs/HousePricePrediction_log.log",
+    console=False,
+    log_level="DEBUG",
 ):
     """Function to setup configurations of logger through function.
 
@@ -51,6 +56,8 @@ def configure_logger(
     -------
     logging.Logger
     """
+    dir = os.path.dirname(log_file)
+    os.makedirs(dir, exist_ok=True)
     if not cfg:
         logging.config.dictConfig(LOGGING_DEFAULT_CONFIG)
     else:
@@ -64,7 +71,6 @@ def configure_logger(
     if log_file or console:
         for hdlr in logger.handlers:
             logger.removeHandler(hdlr)
-
         if log_file:
             fh = logging.FileHandler(log_file)
             fh.setLevel(getattr(logging, log_level))

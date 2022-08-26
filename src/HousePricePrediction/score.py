@@ -44,24 +44,24 @@ def arg_parser():
         help="path to test data",
         default="data/processed",
     )
-    parser.add_argument(
-        "--log-level",
-        type=str,
-        help="Specify the log level",
-        default=config["params"]["log_level"],
-    )
-    parser.add_argument(
-        "--log-path",
-        type=str,
-        help="path to store the logs",
-        default=config["params"]["log_file"],
-    )
-    parser.add_argument(
-        "--no-console-log",
-        type=str,
-        help="Whther to write or not to write the logs to the console",
-        default=config["params"]["no_console"],
-    )
+    # parser.add_argument(
+    #     "--log-level",
+    #     type=str,
+    #     help="Specify the log level",
+    #     default=config["params"]["log_level"],
+    # )
+    # parser.add_argument(
+    #     "--log-path",
+    #     type=str,
+    #     help="path to store the logs",
+    #     default=config["params"]["log_file"],
+    # )
+    # parser.add_argument(
+    #     "--no-console-log",
+    #     type=str,
+    #     help="Whther to write or not to write the logs to the console",
+    #     default=config["params"]["no_console"],
+    # )
     parser.add_argument(
         "--metric",
         type=str,
@@ -81,10 +81,10 @@ def arg_parser():
     ):
         parser.error("Please Provide the path to the data for test using  -td")
 
-    if args.no_console_log and not args.log_path:
-        parser.error(
-            "Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console"
-        )
+    # if args.no_console_log and not args.log_path:
+    #     parser.error(
+    #         "Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console"
+    #     )
 
     return args
 
