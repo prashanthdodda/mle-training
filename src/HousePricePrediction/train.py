@@ -43,25 +43,25 @@ def arg_parser():
         help="path to the trained model file",
         default=config["params"]["trained_models"],
     )
-    parser.add_argument(
-        "--log-level",
-        type=str,
-        help="Specify the log level",
-        default=config["params"]["log_level"],
-    )
-    parser.add_argument(
-        "--log-path",
-        type=str,
-        help="path to store the logs",
-        default=config["params"]["log_file"],
-    )
+    # parser.add_argument(
+    #     "--log-level",
+    #     type=str,
+    #     help="Specify the log level",
+    #     default=config["params"]["log_level"],
+    # )
+    # parser.add_argument(
+    #     "--log-path",
+    #     type=str,
+    #     help="path to store the logs",
+    #     default=config["params"]["log_file"],
+    # )
 
-    parser.add_argument(
-        "--no-console-log",
-        type=str,
-        help="Whther to write or not to write the logs to the console",
-        default=config["params"]["no_console"],
-    )
+    # parser.add_argument(
+    #     "--no-console-log",
+    #     type=str,
+    #     help="Whther to write or not to write the logs to the console",
+    #     default=config["params"]["no_console"],
+    # )
 
     args = parser.parse_args()
     if not os.path.exists(args.input_data) or "train.csv" not in os.listdir(
@@ -73,10 +73,10 @@ def arg_parser():
         parser.error(
             "Please Provide the path to store the trained model file using  -mp"
         )
-    if args.no_console_log and not args.log_path:
-        parser.error(
-            "Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console"
-        )
+    # if args.no_console_log and not args.log_path:
+    #     parser.error(
+    #         "Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console"
+    #     )
     return args
 
 
@@ -162,10 +162,12 @@ def train(
         train_data["median_house_value"],
     )
 
+    models = []
     lr_model = train_linear_regression(X_train, y_train, model_path)
     dt_model = train_decison_tree(X_train, y_train, model_path)
     rf_model = train_randomforest_regressor(X_train, y_train, model_path)
-    return [lr_model, dt_model, rf_model]
+    models = [lr_model, dt_model, rf_model]
+    return models
 
 
 if __name__ == "__main__":

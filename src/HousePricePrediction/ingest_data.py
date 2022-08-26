@@ -6,6 +6,8 @@ import tarfile
 
 import numpy as np
 import pandas as pd
+
+# from logging_tree import printout
 from six.moves import urllib
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
@@ -34,47 +36,65 @@ def arg_aprser():
         "--outputpath",
         type=str,
         help="path to store the downloaded data",
-        default="data/raw/datasets/housing",  # config["params"]["housing_path"],  # "data/raw/datasets/housing",
+        default=config["params"][
+            "housing_path"
+        ],  # "data/raw/datasets/housing",  # config["params"]["housing_path"],  # "data/raw/datasets/housing",
+    )
+    parser.add_argument(
+        "-url",
+        "--housing-url",
+        type=str,
+        help="url to get the data from",
+        default=config["params"][
+            "housing_url"
+        ],  # https://raw.githubusercontent.com/ageron/handson-ml/master/datasets/housing/housing.tgz,
     )
     parser.add_argument(
         "-d",
         "--train_test_data",
         type=str,
         help="path to store the training and validation datasets",
-        default="data/processed",  # config["params"]["processed_data"],  # "data/processed",
+        default=config["params"]["processed_data"],  # "data/processed",
     )
-    parser.add_argument(
-        "--log-level",
-        type=str,
-        help="Specify the log level",
-        default="DEBUG",  # config["params"]["log_level"],  # "DEBUG"
-    )
-    parser.add_argument(
-        "--log-path",
-        type=str,
-        help="path to store the logs",
-        default="logs/HousePricePrediction_log.log",  # config["params"]["log_file"],  # "logs/HousePricePrediction_log.log",
-    )
-    parser.add_argument(
-        "--no-console-log",
-        type=str,
-        help="Whether to write or not to write the logs to the console",
-        default=False,  # config["params"]["no_console"],  # False
-    )
+    # parser.add_argument(
+    #     "--log-level",
+    #     type=str,
+    #     help="Specify the log level",
+    #     default=config["params"][
+    #         "log_level"
+    #     ],  # config["params"]["log_level"],  # "DEBUG"
+    # )
+    # parser.add_argument(
+    #     "--log-path",
+    #     type=str,
+    #     help="path to store the logs",
+    #     default=config["params"][
+    #         "log_file"
+    #     ],  # config["params"]["log_file"],  # "logs/HousePricePrediction_log.log",
+    # )
+    # parser.add_argument(
+    #     "--no-console-log",
+    #     type=str,
+    #     help="Whether to write or not to write the logs to the console",
+    #     default=config["params"][
+    #         "no_console"
+    #     ],  # config["params"]["no_console"],  # False
+    # )
     args = parser.parse_args()
     if not args.outputpath:
         parser.error("Please Provide the path to the data using -op")
     # if not args.train_test_data:
     #     parser.error("Please Provide the path to store the processed data using -d")
-    if args.no_console_log and not args.log_path:
-        parser.error(
-            "Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console"
-        )
+    # if args.no_console_log and not args.log_path:
+    #     parser.error(
+    #         "Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console"
+    #     )
 
     return args
 
 
 logger = logger.configure_logger(logger=log_obj)
+# printout()
 # logger = logger.configure_logger(log_file="logs/HousePricePrediction_log.log", logger=log_obj)
 
 
@@ -173,7 +193,7 @@ def load_housing_data(housing_path):
 #     return data["income_cat"].value_counts() / len(data)
 
 
-def split_data(train_test_data_path):
+def split_data(train_test_data_path, housing_path, housing_url):
     """
     split_data function splits the data into train and test datsets and stores them in the csv fomat in the directory that was provoided in the arguments.
     default directory to store the train adn test data is data/processed
@@ -184,14 +204,13 @@ def split_data(train_test_data_path):
             path to store the train and test datasets.
 
     """
-    housing_path = config["params"]["housing_path"]
-    # train_test_data_path = config['params']['processed_data']
-
-    logger.info("Splitting the data into train and test")
+    # housing_path = config["params"]["housing_path"]
+    logger.debug("Splitting the data into train and test")
     # fetch the data from the URL
-    fetch_housing_data(
-        housing_url=config["params"]["housing_url"], housing_path=housing_path
-    )
+    # fetch_housing_data(
+    #     housing_url=config["params"]["housing_url"], housing_path=housing_path
+    # )
+    fetch_housing_data(housing_url=housing_url, housing_path=housing_path)
 
     # load the data
     housing = load_housing_data(housing_path)
@@ -269,7 +288,6 @@ def split_data(train_test_data_path):
 
     train_data.to_csv(f"{train_test_data_path}/train.csv")
     test_data.to_csv(f"{train_test_data_path}/test.csv")
-
     logger.debug(
         f"splitted data is stored in the path {os.listdir(train_test_data_path)}"
     )
@@ -278,4 +296,7 @@ def split_data(train_test_data_path):
 
 if __name__ == "__main__":
     args = arg_aprser()
-    split_data(args.train_test_data)
+    split_data(
+        args.train_test_data, housing_path=args.outputpath, housing_url=args.housing_url
+    )
+
