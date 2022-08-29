@@ -124,9 +124,9 @@ def train(
     grid_search.fit(X_train, y_train)
 
     grid_search.best_params_
-    cvres = grid_search.cv_results_
-    for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
-        print(np.sqrt(-mean_score), params)
+    # cvres = grid_search.cv_results_
+    # for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
+    #     print(np.sqrt(-mean_score), params)
 
     final_model = grid_search.best_estimator_
 

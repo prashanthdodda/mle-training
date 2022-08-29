@@ -92,7 +92,6 @@ def train_linear_regression(X_train, y_train, model_path):
     lin_reg = LinearRegression()
     logger.info("training Linear Regression model")
     lin_reg.fit(X_train, y_train)
-
     # save models into .pkl files
     lr_path = model_path + "/lr_model.pkl"
     with open(lr_path, "wb") as path:
