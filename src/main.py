@@ -1,6 +1,6 @@
 import os
 
-from HousePricePrediction import ingest_data, logger, score, train
+from HousePricePrediction import ingest_data, score, train
 
 
 def get_data():

@@ -1,6 +1,3 @@
-import os
-import unittest
-
 from HousePricePrediction import ingest_data, score, train
 
 
