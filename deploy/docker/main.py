@@ -1,6 +1,6 @@
 import os
 
-from HousePricePrediction import ingest_data, logger, score, train
+from HousePricePrediction import ingest_data, score, train
 
 
 def get_data():
@@ -9,6 +9,7 @@ def get_data():
     HOUSING_URL = DOWNLOAD_ROOT + "datasets/housing/housing.tgz"
     processed_dir = "data/processed"
     os.makedirs(processed_dir, exist_ok=True)
+    ingest_data.fetch_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH)
     ingest_data.load_housing_data(housing_path=HOUSING_PATH)
     train_data, test_data = ingest_data.split_data(processed_dir)
     # train_data = train_test_path + "/train.csv"

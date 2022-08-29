@@ -12,17 +12,20 @@ import pandas as pd
 # from logging_tree import printout
 from six.moves import urllib
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.compose import ColumnTransformer
-from sklearn.feature_extraction.text import _VectorizerMixin
-from sklearn.feature_selection._base import SelectorMixin
+
+# from sklearn.compose import ColumnTransformer
+# from sklearn.feature_extraction.text import _VectorizerMixin
+# from sklearn.feature_selection._base import SelectorMixin
 from sklearn.impute import SimpleImputer
 
 # from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from HousePricePrediction import logger
+
+# from sklearn.pipeline import Pipeline
+# from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
 
 config = configparser.ConfigParser()
 config.read("setup.cfg")
