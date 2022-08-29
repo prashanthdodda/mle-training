@@ -10,7 +10,9 @@ class Test_ingest_data(unittest.TestCase):
         DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
         HOUSING_PATH = "data/raw/datasets/housing"
         HOUSING_URL = DOWNLOAD_ROOT + "datasets/housing/housing.tgz"
-        ingest_data.fetch_housing_data(housing_path=HOUSING_PATH, housing_url=HOUSING_URL)
+        ingest_data.fetch_housing_data(
+            housing_path=HOUSING_PATH, housing_url=HOUSING_URL
+        )
         self.assertTrue(
             os.path.exists("data/raw/datasets/housing/housing.csv")
         ), "housing.csv is not present"
@@ -22,7 +24,11 @@ class Test_ingest_data(unittest.TestCase):
 
     def test_split_data(self):
         processed_dir = "data/processed"
-        ingest_data.split_data(processed_dir)
+        housing_path = "data/raw/datasets/housing"
+        housing_url = "https://raw.githubusercontent.com/ageron/handson-ml/master/datasets/housing/housing.tgz"
+        ingest_data.split_data(
+            processed_dir, housing_path=housing_path, housing_url=housing_url
+        )
         processed_files = os.listdir(processed_dir)
         assert ("train.csv" in processed_files) and ("test.csv" in processed_files)
 

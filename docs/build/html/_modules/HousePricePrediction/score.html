@@ -75,15 +75,23 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="c1"># from logging_tree import printout</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>  <span class="c1"># ,mean_absolute_error</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">mean_squared_error</span>
 
 <span class="kn">from</span> <span class="nn">HousePricePrediction</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># import pickle</span>
+
+
+<span class="c1"># import pandas as pd</span>
 
 <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
 <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;setup.cfg&quot;</span><span class="p">)</span>
 
-
 <span class="n">log_obj</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">configure_logger</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">log_obj</span><span class="p">)</span>
+<span class="c1"># logger = logger.configure_logger(</span>
+<span class="c1">#     log_file=&quot;logs/HousePricePrediction_log.log&quot;, logger=log_obj</span>
+<span class="c1"># )</span>
 
 
 <div class="viewcode-block" id="arg_parser"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.score.arg_parser">[docs]</a><span class="k">def</span> <span class="nf">arg_parser</span><span class="p">():</span>
@@ -137,64 +145,62 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
             <span class="s2">&quot;Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console&quot;</span>
         <span class="p">)</span>
-    <span class="n">logger1</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">configure_logger</span><span class="p">(</span>
-        <span class="n">logger</span><span class="o">=</span><span class="n">log_obj</span><span class="p">,</span>
-        <span class="n">log_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">,</span>
-        <span class="n">console</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">no_console_log</span><span class="p">,</span>
-        <span class="n">log_level</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span>
+
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+<span class="c1"># class Score:</span>
+<span class="c1">#     def __init__(self, args, logger) -&gt; None:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Intializing the test data and house price preditcion model</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+
+<span class="c1">#         # load train test data</span>
+<span class="c1">#         with open(args.model_path, &quot;rb&quot;) as f:</span>
+<span class="c1">#             model = pickle.load(f)</span>
+<span class="c1">#         self.test_data = pd.read_csv(os.path.join(args.test_data, &quot;test.csv&quot;))</span>
+<span class="c1">#         self.final_model = model</span>
+<span class="c1">#         self.logger = logger</span>
+<span class="c1">#         self.logger.info(f&quot;Intiating {self.__class__.__name__}&quot;)</span>
+
+
+<div class="viewcode-block" id="find_score"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.score.find_score">[docs]</a><span class="k">def</span> <span class="nf">find_score</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">model_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the model score</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model: obj</span>
+<span class="sd">        Fitted Estimator</span>
+<span class="sd">    X_test: pandas.DataFrame</span>
+<span class="sd">        features of testing dataset.</span>
+<span class="sd">    y_test: pandas.DataFrame</span>
+<span class="sd">        target variable in testing dataset</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        float: rmse score</span>
+<span class="sd">        float: mae score</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">test_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">X_test_prepared</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">test_data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">test_data</span><span class="p">[</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span>
     <span class="p">)</span>
+    <span class="n">final_predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_prepared</span><span class="p">)</span>
+    <span class="n">final_mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">final_predictions</span><span class="p">)</span>
+    <span class="n">final_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">final_mse</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">logger1</span></div>
-
-
-<div class="viewcode-block" id="Score"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.score.Score">[docs]</a><span class="k">class</span> <span class="nc">Score</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Intializing the test data and house price preditcion model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># load train test data</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">test_data</span><span class="p">,</span> <span class="s2">&quot;test.csv&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">final_model</span> <span class="o">=</span> <span class="n">model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Intiating </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Score.find_score"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.score.Score.find_score">[docs]</a>    <span class="k">def</span> <span class="nf">find_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the model score</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model: obj</span>
-<span class="sd">            Fitted Estimator</span>
-<span class="sd">        X_test: pandas.DataFrame</span>
-<span class="sd">            features of testing dataset.</span>
-<span class="sd">        y_test: pandas.DataFrame</span>
-<span class="sd">            target variable in testing dataset</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        tuple</span>
-<span class="sd">            float: rmse score</span>
-<span class="sd">            float: mae score</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X_test_prepared</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span><span class="p">[</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="n">final_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_prepared</span><span class="p">)</span>
-        <span class="n">final_mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">final_predictions</span><span class="p">)</span>
-        <span class="n">final_rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">final_mse</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FINAL RMSE : </span><span class="si">{</span><span class="n">final_rmse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
-        <span class="c1"># return final_rmse</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FINAL RMSE : </span><span class="si">{</span><span class="n">final_rmse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_rmse</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">args</span><span class="p">,</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">arg_parser</span><span class="p">()</span>
-    <span class="n">Score</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span><span class="o">.</span><span class="n">find_score</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">arg_parser</span><span class="p">()</span>
+    <span class="n">find_score</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">test_data</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">model_path</span><span class="p">)</span>
 </pre></div>
 
            </div>

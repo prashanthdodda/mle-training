@@ -1,22 +1,37 @@
 #MLE training
 # Median housing value prediction
 
-The housing data can be downloaded from https://raw.githubusercontent.com/ageron/handson-ml/master/. The script has codes to download the data. We have modelled the median house value on given housing data. 
+The housing data can be downloaded from https://raw.githubusercontent.com/ageron/handson-ml/master/. The script has codes to download the data. We have modelled the median house value on given housing data.
 
-Called the function fetch_housing_data and load_housing_dat in order to run the code
 
-The following techniques have been used: 
+Modules:
+Module ingest_data:
+    to fetch and load the hosuing data and to split the data and train and test sets.
+    this stores the train and test csv's in data/processed
+Module train:
+    taking the train data here we build different model to predict the house price.
+    used :
+        - Linear regression
+        - Decision Tree
+        - Random Forest
+    returns:
+        - trained model paths
+Module score:
+    inputs:
+        - takes testdata path and the model path as the inputs. metric ['rmse'/'mae'] optional, default: 'rmse'
+    returns:
+        - the evaluated metric value
 
- - Linear regression
- - Decision Tree
- - Random Forest
+# to install the package HousePricePrediction
+- create a virtual environment using the env.yml file
+- now activate the environment
+    ex:  conda activate mle-dev
+- install the .whl file in the folder dist
+    pip install dist/HousePricePrediction-0.4-py3-none-any.whl
+- to test the package, run python
+    import HousePricePrediction
+or
+- python -v tests/installation_tests/test_installation.py
 
-## Steps performed
- - We prepare and clean the data. We check and impute for missing values.
- - Features are generated and the variables are checked for correlation.
- - Multiple sampling techinuqies are evaluated. The data set is split into train and test.
- - All the above said modelling techniques are tried and evaluated. The final metric used to evaluate is mean squared error.
-
-## To excute the script
-run the following command
-python standardcode.py
+Note:
+    This Should run without any errors if the package is installed properly

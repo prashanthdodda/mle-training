@@ -82,6 +82,15 @@
 
 <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
 <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;setup.cfg&quot;</span><span class="p">)</span>
+<span class="n">log_obj</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="c1"># logger = logger.configure_logger(</span>
+<span class="c1">#     logger=log_obj,</span>
+<span class="c1">#     log_file=config[&quot;params&quot;][&quot;log_file&quot;],</span>
+<span class="c1">#     console=config[&quot;params&quot;][&quot;no_console&quot;],</span>
+<span class="c1">#     log_level=config[&quot;params&quot;][&quot;log_level&quot;],</span>
+<span class="c1"># )</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">configure_logger</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">log_obj</span><span class="p">)</span>
+<span class="c1"># logger = logger.configure_logger(log_file=&quot;logs/HousePricePrediction_log.log&quot;, logger=log_obj)</span>
 
 
 <div class="viewcode-block" id="arg_parser"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.train.arg_parser">[docs]</a><span class="k">def</span> <span class="nf">arg_parser</span><span class="p">():</span>
@@ -94,8 +103,8 @@
         <span class="n">default</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="s2">&quot;processed_data&quot;</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-tp&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--trained_model_path&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-mp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--model-path&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to the trained model file&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="s2">&quot;trained_models&quot;</span><span class="p">],</span>
@@ -126,110 +135,90 @@
     <span class="p">):</span>
         <span class="c1"># if not args.input_data:</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Please Provide the path to the data for training using  -ip&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">trained_model_path</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">model_path</span><span class="p">:</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="s2">&quot;Please Provide the path to store the trained model file using  -tp&quot;</span>
+            <span class="s2">&quot;Please Provide the path to store the trained model file using  -mp&quot;</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">no_console_log</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">:</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
             <span class="s2">&quot;Please Provide the file path to store the logs using --log-path, as you mentioned to not toprint to the console&quot;</span>
         <span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
 
-    <span class="n">log_obj</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-    <span class="n">logger1</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">configure_logger</span><span class="p">(</span>
-        <span class="n">logger</span><span class="o">=</span><span class="n">log_obj</span><span class="p">,</span>
-        <span class="n">log_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">,</span>
-        <span class="n">console</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">no_console_log</span><span class="p">,</span>
-        <span class="n">log_level</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span>
+
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># try 12 (3×4) combinations of hyperparameters</span>
+    <span class="p">{</span><span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="s2">&quot;max_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">]},</span>
+    <span class="c1"># then try 6 (2×3) combinations with bootstrap set as False</span>
+    <span class="p">{</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">],</span> <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s2">&quot;max_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]},</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.train.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+    <span class="n">train_data</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;&#39;</span>
+<span class="sd">    train function takes the train data from the Train object and stores the model in a pickle file</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    -----------</span>
+<span class="sd">        model_path : str</span>
+<span class="sd">        pickle file path to store the trained model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;loading the data..&quot;</span><span class="p">)</span>
+    <span class="n">train_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">train_data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">train_data</span><span class="p">[</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">logger1</span></div>
 
+    <span class="n">lin_reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;training Linear Regression model&quot;</span><span class="p">)</span>
+    <span class="n">lin_reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 
-<span class="c1"># # checking whether to write to console or not</span>
-<span class="c1"># if args.no_console_log:</span>
-<span class="c1">#     logging.basicConfig(filename=args.log_path, level=args.log_level)</span>
-<span class="c1"># else:</span>
-<span class="c1">#     logging.basicConfig(level=args.log_level)</span>
+    <span class="n">tree_reg</span> <span class="o">=</span> <span class="n">DecisionTreeRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;training decision tree model&quot;</span><span class="p">)</span>
+    <span class="n">tree_reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 
+    <span class="n">forest_reg</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="c1"># train across 5 folds, that&#39;s a total of (12+6)*5=90 rounds of training</span>
+    <span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+        <span class="n">forest_reg</span><span class="p">,</span>
+        <span class="n">param_grid</span><span class="p">,</span>
+        <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;neg_mean_squared_error&quot;</span><span class="p">,</span>
+        <span class="n">return_train_score</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Train"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.train.Train">[docs]</a><span class="k">class</span> <span class="nc">Train</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span>
+    <span class="n">cvres</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">cv_results_</span>
+    <span class="k">for</span> <span class="n">mean_score</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cvres</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">],</span> <span class="n">cvres</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">mean_score</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">param_grid</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="c1"># try 12 (3×4) combinations of hyperparameters</span>
-            <span class="p">{</span><span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="s2">&quot;max_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">]},</span>
-            <span class="c1"># then try 6 (2×3) combinations with bootstrap set as False</span>
-            <span class="p">{</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">],</span> <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s2">&quot;max_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]},</span>
-        <span class="p">]</span>
+    <span class="n">final_model</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">best_estimator_</span>
 
-        <span class="c1"># load train test data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;train.csv&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="s2">&quot;trained_models&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Intiating </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># save models into .pkl files</span>
+    <span class="n">lr_path</span> <span class="o">=</span> <span class="n">model_path</span> <span class="o">+</span> <span class="s2">&quot;/lr_model.pkl&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">lr_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">lin_reg</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Train.train"><a class="viewcode-back" href="../../HousePricePrediction.html#HousePricePrediction.train.Train.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&#39;</span>
-<span class="sd">        train function takes the train data from the Train object and stores the model in a pickle file</span>
+    <span class="n">dt_path</span> <span class="o">=</span> <span class="n">model_path</span> <span class="o">+</span> <span class="s2">&quot;/dt_model.pkl&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dt_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">tree_reg</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
-<span class="sd">        Attributes</span>
-<span class="sd">        -----------</span>
-<span class="sd">            model_path : str</span>
-<span class="sd">            pickle file path to store the trained model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training the model..&quot;</span><span class="p">)</span>
-        <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_data</span><span class="p">[</span><span class="s2">&quot;median_house_value&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
+    <span class="n">rf_path</span> <span class="o">=</span> <span class="n">model_path</span> <span class="o">+</span> <span class="s2">&quot;/rf_model.pkl&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rf_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">final_model</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
-        <span class="n">lin_reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;training Linear Regression model&quot;</span><span class="p">)</span>
-        <span class="n">lin_reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-        <span class="n">tree_reg</span> <span class="o">=</span> <span class="n">DecisionTreeRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;training decision tree model&quot;</span><span class="p">)</span>
-        <span class="n">tree_reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-        <span class="n">forest_reg</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-        <span class="c1"># train across 5 folds, that&#39;s a total of (12+6)*5=90 rounds of training</span>
-        <span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
-            <span class="n">forest_reg</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">param_grid</span><span class="p">,</span>
-            <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-            <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;neg_mean_squared_error&quot;</span><span class="p">,</span>
-            <span class="n">return_train_score</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-        <span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span>
-        <span class="n">cvres</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">cv_results_</span>
-        <span class="k">for</span> <span class="n">mean_score</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cvres</span><span class="p">[</span><span class="s2">&quot;mean_test_score&quot;</span><span class="p">],</span> <span class="n">cvres</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">mean_score</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
-
-        <span class="n">final_model</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">best_estimator_</span>
-
-        <span class="c1"># save models into .pkl files</span>
-        <span class="n">lr_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">+</span> <span class="s2">&quot;/lr_model.pkl&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">lr_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">lin_reg</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-        <span class="n">dt_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">+</span> <span class="s2">&quot;/dt_model.pkl&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dt_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">tree_reg</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-        <span class="n">rf_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">+</span> <span class="s2">&quot;/rf_model.pkl&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rf_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">final_model</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trained models stored in path : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;saved models : </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
-        <span class="c1"># return self.model_path</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trained models stored in path : </span><span class="si">{</span><span class="n">model_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;saved models : </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model_path</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">args</span><span class="p">,</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">arg_parser</span><span class="p">()</span>
-    <span class="n">Train</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">arg_parser</span><span class="p">()</span>
+    <span class="n">train</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input_data</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">model_path</span><span class="p">)</span>
 
 </pre></div>
 

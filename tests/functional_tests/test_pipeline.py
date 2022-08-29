@@ -10,13 +10,14 @@ def test_pipleine():
     HOUSING_URL = DOWNLOAD_ROOT + "datasets/housing/housing.tgz"
     processed_dir = "data/processed"
     ingest_data.load_housing_data(housing_path=HOUSING_PATH)
-    train_test_path = ingest_data.split_data(processed_dir)
+    train_test_path = ingest_data.split_data(
+        processed_dir, housing_path=HOUSING_PATH, housing_url=HOUSING_URL
+    )
     train_data = train_test_path + "/train.csv"
     test_data = train_test_path + "/test.csv"
     model_dir = "artifacts"
-    model_dir = train.train(train_data, model_dir)
-    model_path = os.path.join(model_dir, os.listdir(model_dir)[2])
-    res = score.find_score(test_data, model_path)
+    models = train.train(train_data, model_dir)
+    res = score.find_score(test_data, models[2])
     assert isinstance(res, float), "Expected float value"
     return train_test_path
 

@@ -1,31 +1,38 @@
-import logging
-import logging.config
-
-# from logging_tree import printout
-
 # Logging Config
 # More on Logging Configuration
 # https://docs.python.org/3/library/logging.config.html
 # Setting up a config
+import logging
+import logging.config
+import os
+
+# from logging_tree import printout
+
 LOGGING_DEFAULT_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
-    },
     # "formatters": {
-    #     "default": {
-    #         "format": "%(asctime)s %(clientip)-15s %(user)-8s %(message)s",  # "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s",
-    #         "datefmt": "%Y-%m-%d %H:%M:%S",
-    #     },
-    #     "simple": {"format": "%(message)s"},
+    #     "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     # },
+    "formatters": {
+        "default": {
+            "format": "%(asctime)s %(clientip)-15s %(user)-8s %(message)s",  # "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "simple": {"format": "%(message)s"},
+    },
     "root": {"level": "DEBUG"},
 }
 
+# log_file = "logs/HousePricePrediction_log.log"
+
 
 def configure_logger(
-    logger=None, cfg=None, log_file=None, console=False, log_level="DEBUG"
+    logger=None,
+    cfg=None,
+    log_file="logs/HousePricePrediction_log.log",
+    console=False,
+    log_level="DEBUG",
 ):
     """Function to setup configurations of logger through function.
 
@@ -49,6 +56,8 @@ def configure_logger(
     -------
     logging.Logger
     """
+    dir = os.path.dirname(log_file)
+    os.makedirs(dir, exist_ok=True)
     if not cfg:
         logging.config.dictConfig(LOGGING_DEFAULT_CONFIG)
     else:
@@ -62,14 +71,13 @@ def configure_logger(
     if log_file or console:
         for hdlr in logger.handlers:
             logger.removeHandler(hdlr)
-
         if log_file:
             fh = logging.FileHandler(log_file)
             fh.setLevel(getattr(logging, log_level))
             fh.setFormatter(f)
             logger.addHandler(fh)
 
-        if not console:
+        if console:
             sh = logging.StreamHandler()
             sh.setLevel(getattr(logging, log_level))
             sh.setFormatter(f)

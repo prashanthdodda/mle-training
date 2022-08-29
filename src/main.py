@@ -8,6 +8,7 @@ def get_data():
     HOUSING_PATH = "data/raw/datasets/housing"
     HOUSING_URL = DOWNLOAD_ROOT + "datasets/housing/housing.tgz"
     processed_dir = "data/processed"
+    ingest_data.fetch_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH)
     ingest_data.load_housing_data(housing_path=HOUSING_PATH)
     train_test_path = ingest_data.split_data(processed_dir)
     train_data = train_test_path + "/train.csv"

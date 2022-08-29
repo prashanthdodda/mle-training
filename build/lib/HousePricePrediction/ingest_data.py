@@ -18,16 +18,9 @@ from HousePricePrediction import logger as lg
 
 config = configparser.ConfigParser()
 config.read("setup.cfg")
-# print("config["params"]["housing_path"] :", config["params"]["housing_path"])
 
 
 log_obj = logging.getLogger(__name__)
-logger = lg.configure_logger(
-    logger=log_obj,
-    log_file=config["params"]["log_file"],
-    console=config["params"]["no_console"],
-    log_level=config["params"]["log_level"],
-)
 
 
 def arg_aprser():
@@ -75,6 +68,21 @@ def arg_aprser():
         )
 
     return args
+
+
+# def get_logger():
+#     logger = lg.configure_logger(
+#         logger=log_obj,
+#         log_file=config["params"]["log_file"],
+#         console=config["params"]["no_console"],
+#         log_level=config["params"]["log_level"],
+#     )
+#     return logger
+logger = lg.configure_logger(logger=log_obj)
+#     log_file=config["params"]["log_file"],
+#     console=config["params"]["no_console"],
+#     log_level=config["params"]["log_level"],
+# )
 
 
 # class Ingest_data:
